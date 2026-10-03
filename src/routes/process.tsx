@@ -1,0 +1,5 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { StudioLayout } from '@/components/studio/Layout';
+import { PageIntro } from '@/components/studio/Shared';
+import { Process, CTA } from '@/components/studio/Sections';
+export const Route = createFileRoute('/process')({ head: () => ({ links: [{ rel: 'canonical', href: '/process' }], meta: [ { title: 'Our Interior Design Process | Atelier Form' }, { name: 'description', content: 'From discovery and concept to design, execution and delivery, see how Atelier Form creates considered interiors.' }, { property: 'og:title', content: 'Our Process | Atelier Form' }, { property: 'og:description', content: 'A thoughtful journey from the first idea to the finished space.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }, { property: 'og:url', content: '/process' } ] }), component: () => <StudioLayout><PageIntro label="OUR PROCESS / HOW WE WORK" title="The journey matters." text="Good spaces do not happen by accident. They emerge from listening closely, exploring possibilities and caring about each detail."/><Process/><CTA/></StudioLayout> });
