@@ -31,11 +31,9 @@ export function Navbar() {
       className={`site-header ${isHome && !scrolled && !open ? "on-hero" : ""} ${scrolled ? "is-scrolled" : ""}`}
     >
       <div className="nav-inner">
-        <div className="h-14">
-          <Link to="/" className="brand" aria-label="Home">
-            <img src={brand_logo} alt="Studio logo" />
-          </Link>
-        </div>
+        <Link to="/" className="brand" aria-label="Home">
+          <img src={brand_logo} alt="Studio logo" />
+        </Link>
         <nav className="desktop-nav" aria-label="Main navigation">
           {links.map(([label, to]) => (
             <Link key={to} to={to} activeProps={{ className: "active" }}>
