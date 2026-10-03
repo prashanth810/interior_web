@@ -123,12 +123,12 @@ export function Footer() {
             </TextLink>
           </div>
           <div className="footer-mark">
-            AF<span>.</span>
+            DF9<span>.</span>
           </div>
         </div>
         <div className="footer-bottom">
           <Link to="/" className="footer-brand">
-            ATELIER FORM.
+            DF9.
           </Link>
           <p>
             Considered interiors, made personal.
@@ -153,7 +153,7 @@ export function Footer() {
           </Button>
         </div>
         <div className="footer-legal">
-          <span>© {new Date().getFullYear()} ATELIER FORM</span>
+          <span>© {new Date().getFullYear()} DF9 FORM</span>
           <span>INTERIOR DESIGN STUDIO · HYDERABAD</span>
         </div>
       </div>

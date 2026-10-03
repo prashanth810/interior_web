@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { projects, services, steps } from "@/data/projects";
@@ -355,25 +355,38 @@ export function Process() {
     </section>
   );
 }
-export function BeforeAfter() {
+export function BeforeAfter({ mode = "home" }: { mode?: "home" | "contact" }) {
   const [value, setValue] = useState(50);
-  return (
-    <section className="compare-section section-space wrap">
-      <div className="section-heading">
-        <div>
-          <Eyebrow number="09">TRANSFORMATION</Eyebrow>
-          <h2>
-            A shift in <em>perspective.</em>
-          </h2>
-        </div>
-        <p>
-          Explore how a different approach to material and atmosphere can transform the same room.
-        </p>
+  const isContact = mode === "contact";
+
+  const heading = (
+    <div className="section-heading">
+      <div>
+        <Eyebrow number={isContact ? undefined : "09"}>
+          {isContact ? "A SPACE, REIMAGINED" : "TRANSFORMATION"}
+        </Eyebrow>
       </div>
+      <p>
+        {isContact
+          ? "Drag the line to reveal a design vision for a once-ordinary space."
+          : "Explore how a different approach to material and atmosphere can transform the same room."}
+      </p>
+    </div>
+  );
+
+  return (
+    <section
+      className={`compare-section section-space wrap ${isContact ? "contact-comparison" : ""}`}
+    >
+      {!isContact && heading}
       <div className="comparison" style={{ "--split": `${value}%` } as React.CSSProperties}>
         <img
-          src={oak}
-          alt="Warm contemporary interior concept with oak walls and sculptural furniture"
+          src={isContact ? hero : oak}
+          alt={
+            isContact
+              ? "Designed living room with pale stone, warm oak and sculptural furniture"
+              : "Warm contemporary interior concept with oak walls and sculptural furniture"
+          }
           loading="lazy"
           width={1408}
           height={1056}
@@ -381,19 +394,32 @@ export function BeforeAfter() {
         <div className="comparison-overlay">
           <img
             src={hero}
-            alt="Bright open-plan interior concept with pale stone and daylight"
+            alt={
+              isContact
+                ? "The same living room shown as a muted, undecorated design starting point"
+                : "Bright open-plan interior concept with pale stone and daylight"
+            }
             loading="lazy"
             width={1600}
             height={1104}
           />
         </div>
-        <span className="compare-label before">CONCEPT A</span>
-        <span className="compare-label after">CONCEPT B</span>
+        <span className="compare-label before">
+          {isContact ? "BEFORE · THE STARTING POINT" : "CONCEPT A"}
+        </span>
+        <span className="compare-label after">
+          {isContact ? "AFTER · THE DESIGN VISION" : "CONCEPT B"}
+        </span>
         <div className="compare-handle" aria-hidden="true">
-          ↔
+          <span className="compare-knob">
+            <ChevronLeft size={16} strokeWidth={2} color="black" />
+            <ChevronRight size={16} strokeWidth={2} color="black" />
+          </span>
         </div>
         <input
-          aria-label="Compare two interior design concepts"
+          aria-label={
+            isContact ? "Reveal the designed interior" : "Compare two interior design concepts"
+          }
           type="range"
           min="0"
           max="100"
@@ -401,9 +427,6 @@ export function BeforeAfter() {
           onChange={(e) => setValue(Number(e.target.value))}
         />
       </div>
-      <p className="compare-note">
-        An interactive comparison of two design directions, not a documented renovation.
-      </p>
     </section>
   );
 }

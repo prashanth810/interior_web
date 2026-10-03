@@ -794,7 +794,7 @@ p {
 
 .compare-handle {
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   top: 0;
   bottom: 0;
   left: var(--split);
@@ -810,6 +810,32 @@ p {
 
 .compare-handle::first-letter {
   background: var(--background);
+}
+
+.compare-knob {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  box-sizing: border-box;
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  border: 1px solid var(--foreground);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--foreground);
+  pointer-events: none;
+}
+
+.compare-knob svg {
+  flex: 0 0 16px;
+  color: #000;
 }
 
 .comparison input {
@@ -846,6 +872,41 @@ p {
   color: var(--muted-foreground);
   font-size: 11px;
   margin-top: 15px;
+}
+
+.contact-comparison {
+  padding-top: 0;
+  padding-bottom: clamp(65px, 8vw, 110px);
+}
+
+.contact-comparison .section-heading {
+  margin-top: 34px;
+  margin-bottom: 0;
+}
+
+.contact-comparison .section-heading h2 {
+  font-size: clamp(54px, 6vw, 88px);
+}
+
+.contact-comparison .comparison {
+  height: clamp(320px, 48vw, 590px);
+}
+
+.contact-comparison .comparison-overlay img {
+  filter: grayscale(1) brightness(.68) contrast(.9);
+}
+
+.contact-comparison .compare-handle {
+  background: #fff;
+}
+
+.contact-comparison .compare-handle {
+  font-size: 18px;
+}
+
+.comparison input:focus-visible {
+  outline: 2px solid var(--primary-foreground);
+  outline-offset: -8px;
 }
 
 .gallery-grid {
@@ -920,7 +981,7 @@ p {
 }
 
 .footer-mark {
-  font-family: var(--font-display);
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-size: clamp(130px, 22vw, 330px);
   line-height: .7;
   opacity: .18;

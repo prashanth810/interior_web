@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import brandLogoUrl from "../assets/brand_logo.png";
 
 function NotFoundComponent() {
   return (
@@ -78,10 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Atelier Form | Interior Design Studio" },
+      { title: "DF9" },
       { name: "description", content: "Considered interiors shaped by architecture, material and everyday life." },
-      { name: "author", content: "Atelier Form" },
-      { property: "og:title", content: "Atelier Form | Interior Design Studio" },
+      { name: "author", content: "DF9" },
+      { property: "og:title", content: "DF9" },
       { property: "og:description", content: "Considered interiors shaped by architecture, material and everyday life." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -94,7 +95,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Manrope:wght@400;500;600;700&display=swap" },
-      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "icon", href: brandLogoUrl, type: "image/png" },
     ],
   }),
   shellComponent: RootShell,

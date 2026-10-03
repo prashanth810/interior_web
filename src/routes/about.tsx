@@ -1,6 +1,64 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { StudioLayout } from '@/components/studio/Layout';
-import { PageIntro, Eyebrow } from '@/components/studio/Shared';
-import { Philosophy, Materials, CTA } from '@/components/studio/Sections';
-import detail from '@/assets/material-detail.jpg';
-export const Route = createFileRoute('/about')({ head: () => ({ links: [{ rel: 'canonical', href: '/about' }], meta: [ { title: 'About Our Interior Design Studio | Atelier Form' }, { name: 'description', content: 'Discover Atelier Form’s approach to thoughtful interiors, natural materials and personal design in Hyderabad.' }, { property: 'og:title', content: 'About Atelier Form' }, { property: 'og:description', content: 'A Hyderabad interior design studio guided by architecture, material and everyday life.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }, { property: 'og:url', content: '/about' } ] }), component: () => <StudioLayout><PageIntro label="THE STUDIO / HYDERABAD" title="A feeling of belonging." text="We believe the best spaces feel unmistakably yours — inviting, intuitive and made to stand the test of time."/><section className="about-feature wrap section-space"><img src={detail} alt="Natural travertine table and ceramic vessel in a warm, considered interior" width={1008} height={1312}/><div><Eyebrow>OUR APPROACH</Eyebrow><h2>Design is in<br/><em>the details.</em></h2><p>From the first sketch to the final detail, our work brings architecture, material, light and emotion together. We create places that support the way people live and work, without losing the joy of discovery.</p><p>Based in Hyderabad, we bring a considered point of view to residential and commercial interiors.</p></div></section><Philosophy/><Materials/><CTA/></StudioLayout> });
+import { createFileRoute } from "@tanstack/react-router";
+import { StudioLayout } from "@/components/studio/Layout";
+import { PageIntro, Eyebrow } from "@/components/studio/Shared";
+import { Philosophy, Materials, CTA } from "@/components/studio/Sections";
+import detail from "@/assets/material-detail.jpg";
+export const Route = createFileRoute("/about")({
+  head: () => ({
+    links: [{ rel: "canonical", href: "/about" }],
+    meta: [
+      { title: "About Our Interior Design Studio | DF9" },
+      {
+        name: "description",
+        content:
+          "Discover DF9’s approach to thoughtful interiors, natural materials and personal design in Hyderabad.",
+      },
+      { property: "og:title", content: "About DF9" },
+      {
+        property: "og:description",
+        content:
+          "A Hyderabad interior design studio guided by architecture, material and everyday life.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "/about" },
+    ],
+  }),
+  component: () => (
+    <StudioLayout>
+      <PageIntro
+        label="THE STUDIO / HYDERABAD"
+        title="A feeling of belonging."
+        text="We believe the best spaces feel unmistakably yours — inviting, intuitive and made to stand the test of time."
+      />
+      <section className="about-feature wrap section-space">
+        <img
+          src={detail}
+          alt="Natural travertine table and ceramic vessel in a warm, considered interior"
+          width={1008}
+          height={1312}
+        />
+        <div>
+          <Eyebrow>OUR APPROACH</Eyebrow>
+          <h2>
+            Design is in
+            <br />
+            <em>the details.</em>
+          </h2>
+          <p>
+            From the first sketch to the final detail, our work brings architecture, material, light
+            and emotion together. We create places that support the way people live and work,
+            without losing the joy of discovery.
+          </p>
+          <p>
+            Based in Hyderabad, we bring a considered point of view to residential and commercial
+            interiors.
+          </p>
+        </div>
+      </section>
+      <Philosophy />
+      <Materials />
+      <CTA />
+    </StudioLayout>
+  ),
+});
