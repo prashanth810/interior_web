@@ -171,7 +171,7 @@ export function Philosophy() {
         </div>
 
         {/* PRINCIPLES (unchanged) */}
-        <div className="principles">
+        <div className="principles mt-8">
           {[
             ["Thoughtful", "Every detail has a purpose."],
             ["Timeless", "Design that remains beautiful beyond trends."],

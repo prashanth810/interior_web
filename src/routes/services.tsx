@@ -31,7 +31,7 @@ export const Route = createFileRoute("/services")({
       />
       <ServicesList compact />
       <Materials />
-      <Process />
+      {/* <Process /> */}
       <CTA />
     </StudioLayout>
   ),
