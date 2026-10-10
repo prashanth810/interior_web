@@ -1,14 +1,38 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { projects, services, steps } from "@/data/projects";
 import { Eyebrow, TextLink } from "./Shared";
 import hero from "@/assets/hero-interior.jpg";
 import detail from "@/assets/material-detail.jpg";
 import glass from "@/assets/glass-villa.jpg";
-import oak from "@/assets/oak-house.jpg";
 import urban from "@/assets/urban-serenity.jpg";
+import kitchen from "@/assets/kitchen.avif";
+import bedroom from "@/assets/bedroom.avif";
+
+const concepts = [
+  {
+    key: "A",
+    room: "Hall",
+    image: hero,
+    alt: "Light-filled contemporary hall with natural stone and sculptural seating",
+  },
+  {
+    key: "B",
+    room: "Kitchen",
+    image: kitchen,
+    alt: "Contemporary kitchen with warm cabinetry and natural light",
+  },
+  {
+    key: "C",
+    room: "Bedroom",
+    image: bedroom,
+    alt: "Serene bedroom with soft linen and warm light",
+  },
+] as const;
+
+const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
 
 export function Hero() {
   return (
@@ -44,6 +68,7 @@ export function Hero() {
     </section>
   );
 }
+
 export function Intro() {
   return (
     <section id="studio" className="intro-section wrap section-space">
@@ -220,6 +245,7 @@ export function FeaturedProject() {
     </section>
   );
 }
+
 export function ProjectsPreview() {
   return (
     <section className="wrap section-space projects-preview">
@@ -267,6 +293,7 @@ export function ProjectsPreview() {
     </section>
   );
 }
+
 export function ServicesList({ compact = false }: { compact?: boolean }) {
   return (
     <section className={`services-section section-space ${compact ? "compact" : ""}`}>
@@ -294,6 +321,7 @@ export function ServicesList({ compact = false }: { compact?: boolean }) {
     </section>
   );
 }
+
 export function Materials() {
   return (
     <section className="materials-section section-space">
@@ -329,6 +357,7 @@ export function Materials() {
     </section>
   );
 }
+
 export function Process() {
   return (
     <section className="process-section section-space">
@@ -355,81 +384,220 @@ export function Process() {
     </section>
   );
 }
-export function BeforeAfter({ mode = "home" }: { mode?: "home" | "contact" }) {
-  const [value, setValue] = useState(50);
-  const isContact = mode === "contact";
 
-  const heading = (
-    <div className="section-heading">
-      <div>
-        <Eyebrow number={isContact ? undefined : "09"}>
-          {isContact ? "A SPACE, REIMAGINED" : "TRANSFORMATION"}
-        </Eyebrow>
-      </div>
-      <p>
-        {isContact
-          ? "Drag the line to reveal a design vision for a once-ordinary space."
-          : "Explore how a different approach to material and atmosphere can transform the same room."}
-      </p>
+function WorkCompare() {
+  // Two lines. Hall = left of the first line, Kitchen = between the lines,
+  // Bedroom = right of the second line. Lines can go from 0% to 100%.
+  const [splits, setSplits] = useState<[number, number]>([33.33, 66.67]);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const activeHandle = useRef<0 | 1 | "pending" | null>(null);
+  const [first, second] = splits;
+
+  const percentFrom = (clientX: number) => {
+    const el = boxRef.current;
+    if (!el) return null;
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0) return null;
+    return ((clientX - rect.left) / rect.width) * 100;
+  };
+
+  // Moving one line pushes the other one if they meet, so they never get stuck.
+  const moveHandle = (handle: 0 | 1, percent: number) => {
+    const p = clamp(percent, 0, 100);
+    setSplits(([a, b]) => (handle === 0 ? [p, Math.max(b, p)] : [Math.min(a, p), p]));
+  };
+
+  const onKey = (handle: 0 | 1) => (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const current = handle === 0 ? first : second;
+    moveHandle(handle, current + (e.key === "ArrowRight" ? 2 : -2));
+  };
+
+  // right edge of each image's visible part
+  const edge = (i: number) => (i === 0 ? first : i === 1 ? second : 100);
+  const regionWidth = (i: number) => edge(i) - (i === 0 ? 0 : i === 1 ? first : second);
+  const together = second - first < 1;
+
+  return (
+    <div
+      ref={boxRef}
+      role="group"
+      aria-label="Our work: hall, kitchen and bedroom"
+      className="relative aspect-[4/3] w-full cursor-ew-resize select-none overflow-hidden sm:aspect-[16/9] lg:aspect-[2/1]"
+      style={{ touchAction: "pan-y" }}
+      onPointerDown={(e) => {
+        const percent = percentFrom(e.clientX);
+        if (percent === null) return;
+        e.currentTarget.setPointerCapture(e.pointerId);
+
+        // both lines at the same spot: wait for the drag direction to choose
+        if (together && Math.abs(percent - first) < 4) {
+          activeHandle.current = "pending";
+          return;
+        }
+
+        const dFirst = Math.abs(percent - first);
+        const dSecond = Math.abs(percent - second);
+        const handle: 0 | 1 =
+          dFirst < dSecond ? 0 : dSecond < dFirst ? 1 : percent >= first ? 1 : 0;
+        activeHandle.current = handle;
+        moveHandle(handle, percent);
+      }}
+      onPointerMove={(e) => {
+        const current = activeHandle.current;
+        if (current === null) return;
+        const percent = percentFrom(e.clientX);
+        if (percent === null) return;
+
+        if (current === "pending") {
+          if (Math.abs(percent - first) < 0.5) return;
+          const handle: 0 | 1 = percent > first ? 1 : 0;
+          activeHandle.current = handle;
+          moveHandle(handle, percent);
+          return;
+        }
+        moveHandle(current, percent);
+      }}
+      onPointerUp={() => {
+        activeHandle.current = null;
+      }}
+      onPointerCancel={() => {
+        activeHandle.current = null;
+      }}
+    >
+      {concepts.map((c, i) => (
+        <img
+          key={c.key}
+          src={c.image}
+          alt={c.alt}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{
+            zIndex: concepts.length - i,
+            clipPath: `inset(0 ${100 - edge(i)}% 0 0)`,
+          }}
+        />
+      ))}
+
+      {/* Labels */}
+      {concepts.map((c, i) => {
+        const position =
+          i === 0
+            ? { left: 20 }
+            : i === 2
+              ? { right: 20 }
+              : { left: `${(first + second) / 2}%`, transform: "translateX(-50%)" };
+        return (
+          <span
+            key={c.key}
+            className="pointer-events-none absolute bottom-5 z-10 whitespace-nowrap bg-[#f6f3ec] px-4 py-2.5 text-[11px] font-medium tracking-[0.18em] text-[#1f1d1a] transition-opacity duration-200"
+            style={{ ...position, opacity: regionWidth(i) < 20 ? 0 : 1 }}
+          >
+            <span className="hidden sm:inline">CONCEPT </span>
+            {c.key} · {c.room.toUpperCase()}
+          </span>
+        );
+      })}
+
+      {/* The two white lines */}
+      {([first, second] as const).map((pos, h) => (
+        <div
+          key={`line-${h}`}
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 top-0 z-20 w-0.5 -translate-x-1/2 bg-white"
+          style={{ left: `${pos}%` }}
+        />
+      ))}
+
+      {/* The arrow knobs (kept fully inside the frame, even at the edges) */}
+      {([first, second] as const).map((pos, h) => {
+        if (h === 1 && together) return null; // one knob when both lines are together
+        return (
+          <div
+            key={`knob-${h}`}
+            role="slider"
+            tabIndex={0}
+            aria-label={h === 0 ? "Hall and kitchen divider" : "Kitchen and bedroom divider"}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(pos)}
+            onKeyDown={onKey(h as 0 | 1)}
+            className="absolute top-1/2 z-30 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md outline-none focus-visible:ring-2 focus-visible:ring-black"
+            style={{ left: `clamp(22px, ${pos}%, calc(100% - 22px))` }}
+          >
+            <ChevronLeft size={16} strokeWidth={2} color="black" />
+            <ChevronRight size={16} strokeWidth={2} color="black" />
+          </div>
+        );
+      })}
     </div>
   );
+}
+
+function ContactCompare() {
+  const [value, setValue] = useState(50);
+
+  return (
+    <div className="comparison" style={{ "--split": `${value}%` } as CSSProperties}>
+      <img
+        src={hero}
+        alt="Designed living room with pale stone, warm oak and sculptural furniture"
+        loading="lazy"
+        width={1408}
+        height={1056}
+      />
+      <div className="comparison-overlay">
+        <img
+          src={hero}
+          alt="The same living room shown as a muted, undecorated design starting point"
+          loading="lazy"
+          width={1600}
+          height={1104}
+        />
+      </div>
+      <span className="compare-label before">BEFORE · THE STARTING POINT</span>
+      <span className="compare-label after">AFTER · THE DESIGN VISION</span>
+      <div className="compare-handle" aria-hidden="true">
+        <span className="compare-knob">
+          <ChevronLeft size={16} strokeWidth={2} color="black" />
+          <ChevronRight size={16} strokeWidth={2} color="black" />
+        </span>
+      </div>
+      <input
+        aria-label="Reveal the designed interior"
+        type="range"
+        min="0"
+        max="100"
+        value={value}
+        onChange={(e) => setValue(Number(e.target.value))}
+      />
+    </div>
+  );
+}
+
+export function BeforeAfter({ mode = "home" }: { mode?: "home" | "contact" }) {
+  const isContact = mode === "contact";
 
   return (
     <section
       className={`compare-section section-space wrap ${isContact ? "contact-comparison" : ""}`}
     >
-      {!isContact && heading}
-      <div className="comparison" style={{ "--split": `${value}%` } as React.CSSProperties}>
-        <img
-          src={isContact ? hero : oak}
-          alt={
-            isContact
-              ? "Designed living room with pale stone, warm oak and sculptural furniture"
-              : "Warm contemporary interior concept with oak walls and sculptural furniture"
-          }
-          loading="lazy"
-          width={1408}
-          height={1056}
-        />
-        <div className="comparison-overlay">
-          <img
-            src={hero}
-            alt={
-              isContact
-                ? "The same living room shown as a muted, undecorated design starting point"
-                : "Bright open-plan interior concept with pale stone and daylight"
-            }
-            loading="lazy"
-            width={1600}
-            height={1104}
-          />
+      {!isContact && (
+        <div className="section-heading">
+          <div>
+            <Eyebrow number="09">OUR WORK</Eyebrow>
+          </div>
+          <p>Drag the lines to explore our work across the hall, the kitchen and the bedroom.</p>
         </div>
-        <span className="compare-label before">
-          {isContact ? "BEFORE · THE STARTING POINT" : "CONCEPT A"}
-        </span>
-        <span className="compare-label after">
-          {isContact ? "AFTER · THE DESIGN VISION" : "CONCEPT B"}
-        </span>
-        <div className="compare-handle" aria-hidden="true">
-          <span className="compare-knob">
-            <ChevronLeft size={16} strokeWidth={2} color="black" />
-            <ChevronRight size={16} strokeWidth={2} color="black" />
-          </span>
-        </div>
-        <input
-          aria-label={
-            isContact ? "Reveal the designed interior" : "Compare two interior design concepts"
-          }
-          type="range"
-          min="0"
-          max="100"
-          value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
-        />
-      </div>
+      )}
+      {isContact ? <ContactCompare /> : <WorkCompare />}
     </section>
   );
 }
+
 export function Gallery() {
   return (
     <section className="gallery-section section-space wrap">
@@ -468,6 +636,7 @@ export function Gallery() {
     </section>
   );
 }
+
 export function CTA() {
   return (
     <section className="cta-section">

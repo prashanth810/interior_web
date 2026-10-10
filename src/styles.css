@@ -166,6 +166,10 @@ p {
   color: var(--primary-foreground);
 }
 
+.site-header.on-hero .brand img {
+  filter: invert(1);
+}
+
 .site-header.is-scrolled {
   background: color-mix(in oklab, var(--background) 94%, transparent);
   backdrop-filter: blur(14px);

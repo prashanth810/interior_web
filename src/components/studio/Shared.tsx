@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import brand_logo from "../../assets/brand_logo.png";
+import brand_logo from "../../assets/brand_logo.svg";
 
 const links = [
   ["Work", "/projects"],
